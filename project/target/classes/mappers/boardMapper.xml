@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boardMapper">
+	<!-- write new article to board -->
+   <insert id="insertMain">
+	   INSERT INTO NT_BOARD( ANUM, TITLE, CONTENT, NAME, MAINORD )
+	   VALUES( NT_BOARD_SEQ.NEXTVAL, #{title}, #{content}, #{name}, NT_BOARD_SEQ.NEXTVAL )
+   </insert>
+   
+    <insert id="insertSub">    
+	   INSERT INTO NT_BOARD( ANUM, TITLE, CONTENT, NAME, MAINORD, SUBORD, DEPTH )
+	   VALUES( NT_BOARD_SEQ.NEXTVAL, #{title}, #{content}, #{name}, #{mainord}, #{subord}, #{depth} )
+   </insert>
+   
+   <update id="update_subord" parameterType="int">
+   		UPDATE NT_BOARD
+   		SET SUBORD = SUBORD + 1
+   		WHERE MAINORD = #{mainord} and SUBORD >= #{subord}
+   </update>
+   
+   <select id="getlist" parameterType="int" resultType="kw.proj2.vo.boardVO">
+   		SELECT	ANUM, TITLE, NAME, WRDATE, VIEWS, DEPTH
+   		FROM ( SELECT ROW_NUMBER() OVER (ORDER BY MAINORD DESC, SUBORD ASC) R, A.*
+   				FROM	NT_BOARD A
+   				ORDER BY MAINORD DESC, SUBORD ASC )
+   		WHERE R BETWEEN #{top} AND #{top} + 9
+   </select>
+   
+   <select id="open" resultType="kw.proj2.vo.boardVO">
+   		SELECT ANUM, TITLE, CONTENT, NAME, WRDATE, VIEWS, MAINORD, SUBORD, DEPTH
+   		FROM NT_BOARD
+   		WHERE ANUM = #{anum}
+   </select>
+   
+   <update id="modify" parameterType="kw.proj2.vo.boardVO">
+   		UPDATE NT_BOARD
+   		SET TITLE = #{title}, CONTENT = #{content}
+   		WHERE ANUM = #{anum}
+   </update>
+   
+   <delete id="delete" parameterType="int">
+   		DELETE FROM NT_BOARD
+   		WHERE ANUM = #{anum}
+   </delete>
+   
+   <update id="increase_views" parameterType="int">
+   		UPDATE NT_BOARD
+   		SET VIEWS = VIEWS + 1
+   		WHERE ANUM = #{anum}
+   </update>
+   
+   <select id="get_total" resultType="int">
+   		SELECT COUNT(*)
+   		FROM NT_BOARD
+   </select>
+   
+</mapper>

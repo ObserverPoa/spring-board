@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boardMapper">
+	<!-- write new article to board -->
+   <insert id="insert">
+	   INSERT INTO NT_BOARD(	ANUM 
+	   					      , TITLE 
+	   					      , CONTENT 
+	   					      , NAME 
+	   					      , MAINORD )
+	                 VALUES(    NT_BOARD_SEQ.NEXTVAL 
+	                 		  , #{title}
+	                 		  , #{content}
+	                 		  , #{name}
+	                 		  , NT_BOARD_SEQ.NEXTVAL )
+   </insert>
+   
+   <select id="getlist" resultType="kw.proj2.vo.boardVO">
+   		SELECT	(	ANUM, 
+   					TITLE, 
+   					CONTENT, 
+   					NAME, 
+   					WRDATE, 
+   					VIEWS, 
+   					DEPTH )
+   		FROM NT_BOARD
+   		ORDER BY MAINORD DESC, SUBORD ASC
+   </select>
+   
+   
+</mapper>
